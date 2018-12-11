@@ -1,15 +1,18 @@
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn import tree
+from sklearn import svm
 import csv
 import sys
 import os
 
 
 def displayUsage():
-	string = "\nkneighbors.py\n"
+	string = "\nclassification.py\n"
 	string += "---------------------------------------"
-	string += "\nComputes information about k nearest neighbors model from feature data\n"
+	string += "\nComputes information from various model from feature data\n"
 	string += "\nInputs: a .csv file of dns query name features\n"
-	string += "usage: python kneighbors.py <k_value> <input.csv>"
+	string += "usage: python classification.py <input.csv>"
 	print(string)
 
 def badArgs(numArgsRequired):
@@ -20,7 +23,7 @@ def splitData(numLines):
 	# splits data into training and testing. 
 	# returns tuple of (trainingX, trainingY, testingX, testingY)
 	# where X are the features and Y are the labels.
-	features = sys.argv[2]
+	features = sys.argv[1]
 	with open(features) as infile:
 		feature_reader = csv.reader(infile)
 		num_rows = sum(1 for row in feature_reader) -1 # -1 for column headers
@@ -64,16 +67,38 @@ def splitData(numLines):
 
 
 def main():
-	if badArgs(3):
+	if badArgs(2):
 		displayUsage()
 		return
 
-	k = sys.argv[1]
-	(trainingX, trainingY, testingX, testingY) = splitData(500) # first 500 rows are training data, next ~200 are testing, can alter later
-	neigh = KNeighborsClassifier(n_neighbors=k) # create classifier with n_neighbors = k
-	neigh.fit(trainingX, trainingY) # fit training features to training labels
-	print(neigh.score(testingX, testingY)) # see how well it did
+	(trainingX, trainingY, testingX, testingY) = splitData(600) # first 500 rows are training data, next ~200 are testing, can alter later
+	print("\nTesting using K-Nearest-Neighbors with various sizes of K (1-30)...")
+	print("i\t|\t% Accuracy")
+	print('------------------------------------')
+	for i in range(1,31):
+		neigh = KNeighborsClassifier(n_neighbors=i)
+		neigh.fit(trainingX, trainingY)
+		print("i: " + str(i) + "\t|\t" + str(neigh.score(testingX, testingY)))
 
+	print("------------------------------------")
+	print("\nTesting using Multi-layer Perceptron using back propagation...")
+	clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(10,2), random_state=1)
+	clf.fit(trainingX, trainingY)
+	print("score: " + str(clf.score(testingX, testingY)) + "\n")
+	
+	print("------------------------------------")
+	print("\nTesting using a Decision Tree Classifier...")
+	clf = tree.DecisionTreeClassifier()
+	clf.fit(trainingX, trainingY)
+	print("score: " + str(clf.score(testingX, testingY)))
+
+	print("------------------------------------")
+	print("\nTesting using a Support Vector Machine...")
+	clf = svm.SVC(gamma='scale')
+	clf.fit(trainingX, trainingY)
+	print("score: " + str(clf.score(testingX, testingY)))
+
+	print("------------------------------------")
 
 
 if __name__ == '__main__':

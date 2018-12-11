@@ -9,7 +9,7 @@ def displayUsage():
 	string += "\nExtracts features to a csv from a text file of dns query names\n"
 	string += "\nInputs: a .txt file where each line is a dns query name\n"
 	string += "\nOutputs: a .csv file with column headers of various features used for classification\n"
-	string += "usage: python dnsFeatureExtractor.py <input.txt> <output.csv>"
+	string += "usage: python featureExtractor.py <input.txt> <output.csv>"
 	print(string)
 
 def badArgs(numArgsRequired):
@@ -36,6 +36,8 @@ def main():
 	includesNet = [(1 if ".net" in query else 0) for query in queries]
 	includesOrg = [(1 if ".org" in query else 0) for query in queries]
 	includesEdu = [(1 if '.edu' in query else 0) for query in queries]
+	includesCdn = [(1 if "cdn" in query else 0) for query in queries]
+	includesAds = [(1 if "ads" in query else 0) for query in queries]
 
 	#print(queries[:5])
 	#print(lengths[:5])
@@ -48,15 +50,9 @@ def main():
 
 	with open(outputFile, mode='w') as outfile:
 		output_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
-		output_writer.writerow(['query', 'length', 'numDigits', 'numPeriods', 'numDashes', 'includesCom', 'includesNet', 'includesOrg', 'includesEdu'])
+		output_writer.writerow(['query', 'length', 'numDigits', 'numPeriods', 'numDashes', 'includesCom', 'includesNet', 'includesOrg', 'includesEdu', 'includesCdn', 'includesAds'])
 		for i in range(len(queries)):
-			output_writer.writerow([queries[i], lengths[i], numDigits[i], numPeriods[i], numDashes[i], includesCom[i], includesNet[i], includesOrg[i], includesEdu[i]])
-
-
-
-
-
-
+			output_writer.writerow([queries[i], lengths[i], numDigits[i], numPeriods[i], numDashes[i], includesCom[i], includesNet[i], includesOrg[i], includesEdu[i], includesCdn[i], includesAds[i]])
 
 if __name__ == '__main__':
 	main()
