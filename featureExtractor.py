@@ -27,6 +27,12 @@ def main():
 	outputFile = sys.argv[2]
 
 	queries = [line.rstrip('\n') for line in open(inputFile)]
+	queries2 = []
+	for query in queries:
+		if "www." in query:
+			query = query.lstrip("www.")
+		queries2.append(query)
+	queries = queries2
 	#print(queries)
 	lengths = [len(query) for query in queries]
 	numDigits = [sum(c.isdigit() for c in query) for query in queries]

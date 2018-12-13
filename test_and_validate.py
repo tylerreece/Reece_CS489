@@ -12,7 +12,7 @@ def displayUsage():
 	string += "---------------------------------------"
 	string += "\nComputes information from various model from feature data\n"
 	string += "\nInputs: a .csv file of dns query name features and another .csv file for validation\n"
-	string += "usage: python classification.py <training.csv> <validation.csv>"
+	string += "usage: python test_and_validate.py <training.csv> <validation.csv>"
 	print(string)
 
 def badArgs(numArgsRequired):
